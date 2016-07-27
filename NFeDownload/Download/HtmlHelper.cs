@@ -11,13 +11,17 @@ namespace NFeDownload.Download
 {
     public class HtmlHelper
     {
-        private const string UserAgent = "NFe XML Generator";
+        //private const string UserAgent = "NFe XML Generator";
+        private const string UserAgent = "Consultar NF-e Completa";
         private CookieContainer sessionCookie;
 
+        public string _urlDownload = @"http://www.nfe.fazenda.gov.br/portal/consulta.aspx?tipoConsulta=completa&tipoConteudo=XbSeqxE8pl8=";
+                                 //http://www.nfe.fazenda.gov.br/portal/consulta.aspx?tipoConsulta=completa&tipoConteudo=XbSeqxE8pl8=
+        
         public PostItems GetItemsForPost()
         {
             ////Get items for post
-            var request = (HttpWebRequest)WebRequest.Create("http://www.nfe.fazenda.gov.br/portal/consulta.aspx?tipoConsulta=completa&tipoConteudo=XbSeqxE8pl8=");
+            var request = (HttpWebRequest)WebRequest.Create(_urlDownload);
             sessionCookie = new CookieContainer();
             request.CookieContainer = sessionCookie;
             request.UserAgent = UserAgent;
@@ -44,7 +48,7 @@ namespace NFeDownload.Download
                 throw new InvalidOperationException("Resposta sem um formulário web.");
             }
 
-            var capcthElement = doc.GetElementbyId("ContentPlaceHolder1_imgCaptcha");
+            var capcthElement = doc.GetElementbyId("ctl00_ContentPlaceHolder1_imgCaptcha");
             if (capcthElement != null)
                 itemsForPost.Base64Image = capcthElement.GetAttributeValue("src", "nosrc");
 
@@ -111,7 +115,7 @@ namespace NFeDownload.Download
 
             if (string.IsNullOrWhiteSpace(itemsForPost.Captcha))
             {
-                throw new InvalidOperationException("O captcha não foi informado!");
+                throw new InvalidOperationException("ctl00_ContentPlaceHolder1_txtCaptcha; O captcha não foi informado!");
             }
 
             if (itemsForPost.CommomToolkitScripts != "1")
@@ -563,5 +567,6 @@ namespace NFeDownload.Download
 
             return products;
         }
+
     }
 }
